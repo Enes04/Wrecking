@@ -1,13 +1,13 @@
-using System;
-using DG.Tweening;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
-public class PlayerManager : RotateBall
+public class EnemyManager : RotateBall
 {
     [SerializeField] private float rotateTime=5f;
     private float currentTime;
     private bool rotate;
-
     public void Update()
     {
         if (rotate)
@@ -27,29 +27,26 @@ public class PlayerManager : RotateBall
             
         }
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Ball"))
         {
-           CrashPlayer(other.gameObject);
+            CrushEnemy(other.gameObject);
         }
-
         if (other.CompareTag("RotateBox"))
         {
-          
             other.gameObject.SetActive(false);
             rotate = true;
             GetComponent<BallLineRenderer>().CloseRenderer();
         }
     }
 
-    public void CrashPlayer(GameObject ball)
+    public void CrushEnemy(GameObject ball)
     {
-        GetComponent<PlayerMovement>().move = false;
+        GetComponent<EnemyMovement>().move = false;
         Vector3 direction = transform.position - ball.transform.position;
         direction = new Vector3(direction.x, 0, direction.z);
-        transform.DOJump(direction * 5, 15, 1, 2).OnComplete(() => { GetComponent<PlayerMovement>().move = true; });
+        transform.DOJump(direction * 5, 15,1,2).OnComplete(() => { GetComponent<EnemyMovement>().move = true;});
         transform.DOLocalRotate(new Vector3(0, 0, 360), 1, RotateMode.FastBeyond360).SetRelative(true)
             .SetEase(Ease.Linear);
     }
